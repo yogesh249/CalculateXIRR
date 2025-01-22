@@ -15,3 +15,6 @@ What you need to do is
 4. go to the page shown in the above screenshot
 5. Right click Under Scripty select CalculateXIRRinKuveraTransactionsScreen
 6. And you'll be shown a page like this
+
+
+![](images/assets/FinalResult.jpg)
