@@ -18,3 +18,5 @@ What you need to do is
 
 
 ![](images/assets/FinalResult.jpg)
+
+And here we can see the XIRR
