@@ -1,5 +1,5 @@
 (function () {
-
+  xirr=0.0;
   function removeDateSuffix(dateStr) {
     return dateStr.replace(/(\d+)(st|nd|rd|th)/, '$1');  // Removes st, nd, rd, th
   }
@@ -150,7 +150,7 @@
     console.log(dateArray);
 
     const XIRRValue = calculateXIRR(cashFlowArray, dateArray).toFixed(2);
-
+    xirr=XIRRValue;
     // Generate HTML table
     let tableHTML = `<h2>Current Value: ₹${currentValue}</h2>`;
     tableHTML += `<h2>Current NAV: ₹${currentNAV}</h2>`;
@@ -178,45 +178,57 @@
 
   // Generate the table
   const generatedTable = generateTable(htmlContent);
+var divElement = document.createElement('div');
+divElement.innerHTML = "<h2>XIRR: " + xirr + "%</h2>";
+divElement.id = "bottomLeftElement";
 
+// Apply styling using JavaScript
+divElement.style.position = "fixed"; // Fixed positioning
+divElement.style.bottom = "0";       // Position at the bottom
+divElement.style.right = "1";         // Position at the left
+divElement.style.padding = "10px";   // Add padding
+divElement.style.backgroundColor = "lightcoral"; // Background color
+divElement.style.border = "1px solid #ccc";      // Add border
+divElement.style["z-index"]=1000;
+  document.body.appendChild(divElement);
   // Open a new window and display the table
-  const newWindow = window.open('', '_blank');
-  newWindow.document.open();
-  newWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Generated Table</title>
-        <style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th, td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #f2f2f2;
-    position: sticky;
-    top: 0; /* Sticks the header to the top of the viewport when scrolling */
-    z-index: 1; /* Ensures the headers are above other content */
-  }
-  h2 {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 10px;
-  }
-</style>
+//   const newWindow = window.open('', '_blank');
+//   newWindow.document.open();
+//   newWindow.document.write(`
+//     <!DOCTYPE html>
+//     <html lang="en">
+//       <head>
+//         <meta charset="UTF-8">
+//         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//         <title>Generated Table</title>
+//         <style>
+//   table {
+//     border-collapse: collapse;
+//     width: 100%;
+//   }
+//   th, td {
+//     border: 1px solid black;
+//     padding: 8px;
+//     text-align: left;
+//   }
+//   th {
+//     background-color: #f2f2f2;
+//     position: sticky;
+//     top: 0; /* Sticks the header to the top of the viewport when scrolling */
+//     z-index: 1; /* Ensures the headers are above other content */
+//   }
+//   h2 {
+//     font-size: 20px;
+//     color: #333;
+//     margin-bottom: 10px;
+//   }
+// </style>
 
-      </head>
-      <body>
-        ${generatedTable}
-      </body>
-    </html>
-  `);
-  newWindow.document.close();
+//       </head>
+//       <body>
+//         ${generatedTable}
+//       </body>
+//     </html>
+//   `);
+//   newWindow.document.close();
 })();
