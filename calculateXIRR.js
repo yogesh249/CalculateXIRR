@@ -1,10 +1,16 @@
 (function () {
-  
+
   function removeDateSuffix(dateStr) {
-  return dateStr.replace(/(\d+)(st|nd|rd|th)/, '$1');  // Removes st, nd, rd, th
-}
-  
-  
+    return dateStr.replace(/(\d+)(st|nd|rd|th)/, '$1');  // Removes st, nd, rd, th
+  }
+  function extractXirrFromHtml(html) {
+    const xirrMatch = html.match(/<h2>XIRR: (\d+\.\d+)%<\/h2>/);
+    if (xirrMatch) {
+      return parseFloat(xirrMatch[1]);
+    }
+    return null;
+  }
+
   // Function to extract and generate table
   function generateTable(html) {
     // Create a temporary DOM element to parse the HTML content
@@ -47,8 +53,7 @@
       if (!invested || invested === '-' || invested === ' -') {
         cells[1] = cells[2]; // Copy redeemed value to invested
       }
-      else
-      {
+      else {
         // Multiply the invested value by -1
         cells[1] = parseFloat(cells[1].replace('₹', '').replace(/,/g, '').trim()) * -1;
       }
@@ -69,20 +74,20 @@
     rows.unshift([formattedDate, parseFloat(currentValue), 0.0, currentNAV]); // Today's date, currentValue (Invested), NAV
 
     // Sort rows by date in increasing order
-  rows.sort((a, b) => {
-    // Convert date from DD MMM YYYY to Date object
-    const parseDate = (dateStr) => {
+    rows.sort((a, b) => {
+      // Convert date from DD MMM YYYY to Date object
+      const parseDate = (dateStr) => {
         const [day, month, year] = dateStr.split(' ');
         const dayNumber = parseInt(day, 10);  // Ensure the day is treated as a number
         const monthIndex = new Date(`${month} 1, 2020`).getMonth(); // Get month index from month name
         return new Date(year, monthIndex, dayNumber); // Return Date object
-    };
+      };
 
-    const dateA = parseDate(a[0]); // Convert first column (date) to Date object
-    const dateB = parseDate(b[0]); // Convert second column (date) to Date object
+      const dateA = parseDate(a[0]); // Convert first column (date) to Date object
+      const dateB = parseDate(b[0]); // Convert second column (date) to Date object
 
-    return dateA - dateB; // Compare dates for sorting
-	});
+      return dateA - dateB; // Compare dates for sorting
+    });
 
     // Calculate XIRR
     const dateArray = [];
@@ -90,7 +95,7 @@
 
     // Add all dates and cash flows (investments and redeemed) into arrays
     rows.forEach(row => {
-      row[0]=removeDateSuffix(row[0]);
+      row[0] = removeDateSuffix(row[0]);
       dateArray.push(new Date(row[0])); // Date is assumed to be in the first column (index 0)
       cashFlowArray.push(parseFloat(row[1])); // Invested (negative) or redeemed (positive) amount
     });
@@ -100,46 +105,46 @@
     //cashFlowArray.push(parseFloat(currentValue)); // Current value (redeemed amount)
 
     // XIRR function to calculate the internal rate of return
-function calculateXIRR(values, dates, guess = 0.2) {
-  const maxIterations = 500; // Increased iterations
-  const tolerance = 1e-6;    // Relaxed tolerance
+    function calculateXIRR(values, dates, guess = 0.2) {
+      const maxIterations = 500; // Increased iterations
+      const tolerance = 1e-6;    // Relaxed tolerance
 
-  if (values.length !== dates.length || values.length < 2) {
-    throw new Error('Values and dates must have the same length and contain at least two items.');
-  }
+      if (values.length !== dates.length || values.length < 2) {
+        throw new Error('Values and dates must have the same length and contain at least two items.');
+      }
 
-  if (!values.some(v => v > 0) || !values.some(v => v < 0)) {
-    throw new Error('At least one positive and one negative cash flow are required.');
-  }
+      if (!values.some(v => v > 0) || !values.some(v => v < 0)) {
+        throw new Error('At least one positive and one negative cash flow are required.');
+      }
 
-  let rate = guess;
+      let rate = guess;
 
-  for (let iter = 0; iter < maxIterations; iter++) {
-    let f = 0;
-    let fPrime = 0;
+      for (let iter = 0; iter < maxIterations; iter++) {
+        let f = 0;
+        let fPrime = 0;
 
-    for (let i = 0; i < values.length; i++) {
-      const days = (dates[i] - dates[0]) / (1000 * 60 * 60 * 24); // Days between dates
-      const years = days / 365; // Convert days to years
+        for (let i = 0; i < values.length; i++) {
+          const days = (dates[i] - dates[0]) / (1000 * 60 * 60 * 24); // Days between dates
+          const years = days / 365; // Convert days to years
 
-      const denominator = Math.pow(1 + rate, years);
-      f += values[i] / denominator;
-      fPrime -= (years * values[i]) / (denominator * (1 + rate));
+          const denominator = Math.pow(1 + rate, years);
+          f += values[i] / denominator;
+          fPrime -= (years * values[i]) / (denominator * (1 + rate));
+        }
+
+        const newRate = rate - f / fPrime;
+
+        console.log(`Iteration ${iter}: Rate = ${rate.toFixed(6)}, f = ${f.toFixed(6)}, fPrime = ${fPrime.toFixed(6)}`);
+
+        if (Math.abs(newRate - rate) < tolerance) {
+          return newRate * 100; // Convert to percentage
+        }
+
+        rate = newRate;
+      }
+
+      throw new Error('XIRR calculation did not converge');
     }
-
-    const newRate = rate - f / fPrime;
-
-    console.log(`Iteration ${iter}: Rate = ${rate.toFixed(6)}, f = ${f.toFixed(6)}, fPrime = ${fPrime.toFixed(6)}`);
-
-    if (Math.abs(newRate - rate) < tolerance) {
-      return newRate * 100; // Convert to percentage
-    }
-
-    rate = newRate;
-  }
-
-  throw new Error('XIRR calculation did not converge');
-}
 
     console.log(cashFlowArray);
     console.log(dateArray);
