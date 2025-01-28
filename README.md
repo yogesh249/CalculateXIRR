@@ -17,6 +17,6 @@ What you need to do is
 6. And you'll be shown a page like this
 
 
-![](images/assets/FinalResult.jpg)
+![](images/assets/XirrOnBottomLeft.png)
 
 And here we can see the XIRR
