@@ -1,4 +1,25 @@
 (function () {
+  
+  function animateNumber(finalNumber, duration = 2000) {
+    const element = document.getElementById("bottomLeftElement"); // STEP 1: Get the element
+    const startTime = performance.now(); // Get the current time
+    const startNumber = 0; 
+
+    function updateNumber(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1); // Ensure we don’t go over 1
+        const currentNumber = (progress * finalNumber).toFixed(2);
+		// Update the GUI
+        element.innerHTML = "<h2> XIRR: " + currentNumber + " % " + "</h2>";
+
+        if (progress < 1) {
+            requestAnimationFrame(updateNumber); // STEP 3: Request next frame
+        }
+    }
+
+    requestAnimationFrame(updateNumber); // Start the animation
+}
+  
   xirr=0.0;
   function removeDateSuffix(dateStr) {
     return dateStr.replace(/(\d+)(st|nd|rd|th)/, '$1');  // Removes st, nd, rd, th
@@ -189,8 +210,11 @@ divElement.style.right = "1";         // Position at the left
 divElement.style.padding = "10px";   // Add padding
 divElement.style.backgroundColor = "lightcoral"; // Background color
 divElement.style.border = "1px solid #ccc";      // Add border
+divElement.style.visible="true";
 divElement.style["z-index"]=1000;
   document.body.appendChild(divElement);
+  animateNumber(xirr, 1000);
+  setInterval(function() { divElement.remove(); }, 3000);
   // Open a new window and display the table
 //   const newWindow = window.open('', '_blank');
 //   newWindow.document.open();
