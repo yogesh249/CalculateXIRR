@@ -13,10 +13,10 @@ What you need to do is
 2. Go to https://scripty.abhisheksatre.com/#/store and on left click script store
 3. look for this script - CalculateXIRRinKuveraTransactionsScreen and click Install
 4. go to the page shown in the above screenshot
-5. Right click Under Scripty select CalculateXIRRinKuveraTransactionsScreen
-6. And you'll be shown a page like this
+5. Right click Under Scripty select CalculateXIRRinKuveraTransactionsScreen (in case you dont see this option, just refresh the page)
+6. And you'll be shown the XIRR on the bottom left corner of the page
 
 
-![](images/assets/FinalResult.jpg)
+![](images/assets/XirrOnBottomLeft.png)
 
 And here we can see the XIRR
